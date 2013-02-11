@@ -30,20 +30,15 @@ def main():
     parser = OptionParser(usage=usage)
 
     (options, args) = parser.parse_args()
-
     ### Parse args
-    # Only deal with the case of one or no infiles
     assert len(args) <= 1
     infilename = args[0] if args else None
-
     infile = open(infilename, 'r')
-
-    relations(infile)
-
+    _relations(infile)
     infile.close()
 
 
-def relations(infile):
+def _relations(infile):
     lattice_points = loadtxt(infile, dtype='int', delimiter=',')
     variable_dict = _get_variable_dict(lattice_points)
     variables = variable_dict.keys()
@@ -74,6 +69,8 @@ def _pretty_print(variables, variable_dict, relations):
     for variable in variables:
         print '\t' + variable + ' <----> ', variable_dict[variable].tolist()
     print "Relations:"
+    if not relations:
+        print '\tNone'
     for relation in relations:
         temp_string = '\t'
         for pair in relation:
