@@ -2,6 +2,7 @@
 from optparse import OptionParser
 from numpy import array, loadtxt
 from itertools import product as prod
+import sys
 
 
 def main():
@@ -33,7 +34,10 @@ def main():
     ### Parse args
     assert len(args) <= 1
     infilename = args[0] if args else None
-    infile = open(infilename, 'r')
+    if infilename:
+        infile = open(infilename, 'r')
+    else:
+        infile = sys.stdin
     _relations(infile)
     infile.close()
 
@@ -44,7 +48,8 @@ def _relations(infile):
     variables = variable_dict.keys()
     variables.sort()
     relations = _get_relations(variable_dict)
-    _pretty_print(variables, variable_dict, relations)
+    num_relations = reduce(lambda x, y: x + len(y) - 1, relations, 0)
+    _pretty_print(variables, variable_dict, relations, num_relations)
 
 
 def _get_relations(variable_dict):
@@ -64,11 +69,11 @@ def _get_relations(variable_dict):
     return relations
 
 
-def _pretty_print(variables, variable_dict, relations):
+def _pretty_print(variables, variable_dict, relations, num_relations):
     print "Variables:"
     for variable in variables:
         print '\t' + variable + ' <----> ', variable_dict[variable].tolist()
-    print "Relations:"
+    print num_relations, "Relations:"
     if not relations:
         print '\tNone'
     for relation in relations:
