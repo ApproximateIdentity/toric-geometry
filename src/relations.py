@@ -1,23 +1,26 @@
-from numpy import array
+from numpy import array, loadtxt
 from itertools import product as prod
 
 class Relations():
     '''
-    This computes the relations coming from the standard projective embedding of
-    a toric polytope. The inputs are the integer lattice points within a
-    (closed) toric polytope. The order of the inputted lattice points
-    corresponds gives variables 'x0', ..., 'xN' where N is the total number of
-    lattice points in P. The lattice points should be inputed as a list of lists
-    of integers--where the dimension determines the lenth of the interior lists.
+    DESCRIPTION
+    -----------
+    Returns the relations of the projective embedding of a toric variety coming
+    from it toric polytope.
 
-    CAVEAT: I JUST REALIZED THAT THE RELATIONS THAT ARE GIVEN ARE NOT NECESSARILY
-    MINIMAL. (THOUGH THE CODE DOES PRECLUDE NON-MINIMAL RELATIONS OF LENGTH 2...
+    NOTES
+    -----
+    The lattice points of the polytope should be given in an input text file or
+    they should be piped in (but care must be taken to add newline
+    characters--i.e. '\n'--in between the lattice points. The names of the
+    variables are chosen in the order the lattice points are given.
 
-    Example:
-
-    rel = Relations([[0,0],[0,1],[1,0],[1,1]])
-    rel.compute_relations()
-    rel.result = [['x0x3','x1x2']]
+    EXAMPLES
+    ---------
+    Return the relations for P^1 polarized by O(2)--which corresponds to the
+    polytope [0,2].  The example file contains the points 0, 1, and 2 each on
+    their own line.
+    $ python relations.py ../examples/P1O2
     '''
 
     def __init__(self, lattice_points):
