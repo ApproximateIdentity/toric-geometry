@@ -3,6 +3,7 @@ from optparse import OptionParser
 from numpy import array, loadtxt
 from itertools import product as prod
 import sys
+import src.common as common
 
 
 def main():
@@ -29,27 +30,36 @@ def main():
     usage = "usage: %prog [options] dataset"
     usage += '\n'+main.__doc__
     parser = OptionParser(usage=usage)
+    parser.add_option(
+        "-o", "--outfilename",
+        help="Write to this file rather than stdout.  [default: %default]",
+        action="store", dest="outfilename", default=None)
+    parser.add_option(
+        "-n", "--variable_start",
+        help="Start variable count at this number. [default: %default]",
+        action="store", dest="variable_start", default=0)
 
     (options, args) = parser.parse_args()
     ### Parse args
     assert len(args) <= 1
     infilename = args[0] if args else None
-    if infilename:
-        infile = open(infilename, 'r')
-    else:
-        infile = sys.stdin
-    _relations(infile)
-    infile.close()
 
+    ## Get infile and outfile.
+    infile, outfile = common.get_inout_files(infilename, options.outfilename)
 
-def _relations(infile):
+    _relations(infile, outfile, variable_start=options.variable_start)
+
+    ## Close the files iff not stdin, stdout
+    common.close_files(infile, outfile)
+
+def _relations(infile, outfile, variable_start):
     lattice_points = loadtxt(infile, dtype='int', delimiter=',')
-    variable_dict = _get_variable_dict(lattice_points)
+    variable_dict = _get_variable_dict(lattice_points, variable_start)
     variables = variable_dict.keys()
     variables.sort()
     relations = _get_relations(variable_dict)
     num_relations = reduce(lambda x, y: x + len(y) - 1, relations, 0)
-    _pretty_print(variables, variable_dict, relations, num_relations)
+    _pretty_print(outfile, variables, variable_dict, relations, num_relations)
 
 
 def _get_relations(variable_dict):
@@ -69,23 +79,27 @@ def _get_relations(variable_dict):
     return relations
 
 
-def _pretty_print(variables, variable_dict, relations, num_relations):
-    print "Variables:"
+def _pretty_print(outfile, variables, variable_dict, relations, num_relations):
+    outfile.write("Variables:\n")
     for variable in variables:
-        print '\t' + variable + ' <----> ', variable_dict[variable].tolist()
-    print num_relations, "Relations:"
+        outfile.write('\t' + variable + ' <----> ')
+        outfile.write(str(variable_dict[variable].tolist()) + '\n')
+    outfile.write(str(num_relations) + " Relations:\n")
     if not relations:
-        print '\tNone'
-    for relation in relations:
-        temp_string = '\t'
-        for pair in relation:
-            temp_string = temp_string + pair[0] + pair[1] + ' = '
-        print temp_string[:-3]
+        outfile.write('\tNone\n')
+    else:
+        for relation in relations:
+            relation.sort()
+            temp_string = '\t'
+            for pair in relation:
+                temp_string = temp_string + pair[0] + pair[1] + ' = '
+            outfile.write(temp_string[:-3] + '\n')
 
 
-def _get_variable_dict(lattice_points):
+def _get_variable_dict(lattice_points, variable_start):
+    variable_start = int(variable_start)
     variable_dict = {}
-    for num, point in enumerate(lattice_points):
+    for num, point in enumerate(lattice_points, variable_start):
         variable_dict['x' + str(num)] = point
     return variable_dict
 
