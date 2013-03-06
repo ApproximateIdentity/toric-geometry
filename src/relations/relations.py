@@ -3,7 +3,7 @@ from optparse import OptionParser
 from numpy import array, loadtxt
 from itertools import product as prod
 import sys
-import src.common as common
+import src.common.common as common
 
 
 def main():
