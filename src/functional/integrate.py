@@ -17,6 +17,10 @@ def integrate_over_line(function, point1, point2, weight):
     point1 : 2 x 1 np.ndarray
     point2 : 2 x 1 np.ndarray
     weight : postivie real number
+
+    Returns
+    -------
+    w : real number
     """
     pass
 
@@ -31,5 +35,9 @@ def integrate_over_triangle(function, point1, point2, point3):
     point1 : 2 x 1 np.ndarray
     point2 : 2 x 1 np.ndarray
     point3 : 2 x 1 np.ndarray
+
+    Returns
+    -------
+    w : real number
     """
     pass
