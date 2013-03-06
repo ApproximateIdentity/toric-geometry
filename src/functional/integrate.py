@@ -13,9 +13,9 @@ def integrate_over_line(function, point1, point2, weight):
 
     Parameters
     ----------
-    function : real-valued function whose inputs are 2 x 1 np.ndarrays
-    point1 : 2 x 1 np.ndarray
-    point2 : 2 x 1 np.ndarray
+    function : real-valued function whose inputs are 1 x 2 np.ndarrays
+    point1 : 1 x 2 np.ndarray
+    point2 : 1 x 2 np.ndarray
     weight : postivie real number
 
     Returns
@@ -31,10 +31,10 @@ def integrate_over_triangle(function, point1, point2, point3):
 
     Parameters
     ----------
-    function : real-valued function whose inputs are 2 x 1 np.ndarrays
-    point1 : 2 x 1 np.ndarray
-    point2 : 2 x 1 np.ndarray
-    point3 : 2 x 1 np.ndarray
+    function : real-valued function whose inputs are 1 x 2 np.ndarrays
+    point1 : 1 x 2 np.ndarray
+    point2 : 1 x 2 np.ndarray
+    point3 : 1 x 2 np.ndarray
 
     Returns
     -------
