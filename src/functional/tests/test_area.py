@@ -11,11 +11,11 @@ class TestAreaFunction(unittest.TestCase):
 
     def test_area1(self):
         # Make sure area is correct for triangle.
-        self.assertEqual(self.triangle_area, 0.5)
+        self.assertEqual(area(self.triangle), 0.5)
 
     def test_area2(self):
         # Make sure area is correct for square.
-        self.assertEqual(self.square_area, 1.0)
+        self.assertEqual(area(self.square), 1.0)
 
 
 if __name__=='__main__':
