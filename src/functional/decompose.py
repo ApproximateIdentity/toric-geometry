@@ -11,11 +11,11 @@ def decompose_to_edges(vertex_points):
 
     Parameters
     ----------
-    vertex_points : N x 2 np.ndarray
+    vertex_points : length N list of 1 x 2 np.ndarrays
 
     Returns
     -------
-    edges_list : length N list of pairs of np.ndarrays
+    edges_list : length N list of pairs of 1 x 2 np.ndarrays
     """
     pass
 
@@ -26,12 +26,12 @@ def decompose_to_triangles(vertex_points, base_point=None):
 
     Parameters
     ----------
-    vertex_points : N x 2 np.ndarray
+    vertex_points : length N list of 1 x 2 np.ndarrays
     base_point : 1 x 2 np.ndarray
 
     Returns
     -------
-    triangles_list : length N or (N-2) list of triples of np.ndarrays
+    triangles_list : length N or (N-2) list of triples of 1 x 2 np.ndarrays
 
     Notes
     -----
