@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import linalg
 
 """
 Module for finding area of a polygon.
@@ -10,26 +11,28 @@ def area(vertex_list):
 
     Parameters
     ----------
-    vertex_list : list of 1 x 2 np.ndarrays
+    vertex_list : N x 2 np.ndarray
 
     Returns
     -------
     area : real number
     """
-    pass
+    area = area_of_triangle(vertex_list)
+    return area
 
-def area_of_triangle(point1, point2, point3):
+def area_of_triangle(vertex_list):
     """
     Return area of triangle.
 
     Parameters
     ----------
-    point1 : 1 x 2 np.ndarray
-    point2 : 1 x 2 np.ndarray
-    point3 : 1 x 2 np.ndarray
+    vertex_list : 3 x 2 np.ndarray
 
     Returns
     -------
     area : real number
     """
-    pass
+    # Use determinant.
+    M = np.vstack((vertex_list.T, np.array([1, 1, 1], dtype='float')))
+    area = 0.5*linalg.det(M)
+    return area
