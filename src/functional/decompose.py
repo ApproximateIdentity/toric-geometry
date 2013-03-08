@@ -39,4 +39,11 @@ def decompose_to_triangles(vertex_points, base_point=None):
     Consequently, there are only N-2 triangles left since two of them would
     have area 0.
     """
-    pass
+    num_vertices = len(vertex_points)
+    triangles_list = np.array([vertex_points[0:3]])
+    for i in range(2, num_vertices - 1):
+        mask = [0, i, i+1]
+        triangles_list = np.vstack((triangles_list,
+                                    np.array([vertex_points[mask]])))
+
+    return triangles_list
