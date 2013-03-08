@@ -4,46 +4,45 @@ import numpy as np
 Module for decomposing vertex points into lines and triangles.
 """
 
-def decompose_to_edges(vertex_points):
+def decompose_to_edges(vertices):
     """
     Return list of pairs of adjacent vertices coming from list of vertex
     points.
 
     Parameters
     ----------
-    vertex_points : length N list of 1 x 2 np.ndarrays
+    vertices : N x 2 np.ndarray
 
     Returns
     -------
-    edges_list : length N list of pairs of 1 x 2 np.ndarrays
+    edges : N x 2 x 2 np.ndarray
     """
     pass
 
-def decompose_to_triangles(vertex_points, base_point=None):
+def decompose_to_triangles(vertices, base_point=None):
     """
     Return list of triples of points which form triangles. The first point in
     each triple is base_point.
 
     Parameters
     ----------
-    vertex_points : length N list of 1 x 2 np.ndarrays
+    vertices : N x 2 np.ndarray
     base_point : 1 x 2 np.ndarray
 
     Returns
     -------
-    triangles_list : length N or (N-2) list of triples of 1 x 2 np.ndarrays
+    triangles : N x 3 x 2 or (N-2) x 3 x 2 dimensio np.ndarray
 
     Notes
     -----
-    If base_point is None, then base_point is set as vertex_points[0].
-    Consequently, there are only N-2 triangles left since two of them would
+    If base_point is None, then base_point is set as vertices[0].
+    Consequently, there are only N -2 triangles left since two of them would
     have area 0.
     """
-    num_vertices = len(vertex_points)
-    triangles_list = np.array([vertex_points[0:3]])
+    num_vertices = len(vertices)
+    triangles = np.array([vertices[0:3]])
     for i in range(2, num_vertices - 1):
         mask = [0, i, i+1]
-        triangles_list = np.vstack((triangles_list,
-                                    np.array([vertex_points[mask]])))
+        triangles = np.vstack((triangles, np.array([vertices[mask]])))
 
-    return triangles_list
+    return triangles
