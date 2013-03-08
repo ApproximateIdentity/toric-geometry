@@ -8,8 +8,8 @@ class TestAreaFunction(unittest.TestCase):
     def setUp(self):
         self.triangle1 = array([[0, 0], [1, 0], [0, 1]], dtype='float')
         self.triangle2 = array([[0, 0], [2, 0], [0, 1]], dtype='float')
-        self.square = array([[0, 0], [1, 0], [0, 1], [1, 1]], dtype='float')
-        self.trapezoid = array([[0, 0], [2, 0], [0, 1], [1, 1]], dtype='float')
+        self.square = array([[0, 0], [1, 0], [1, 1], [0, 1]], dtype='float')
+        self.trapezoid = array([[0, 0], [2, 0], [1, 1], [0, 1]], dtype='float')
         self.pentagon = array([[0, 0], [2, 0], [2, 1], [1, 2], [0, 2]],
                               dtype='float')
 
