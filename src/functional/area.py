@@ -7,7 +7,7 @@ from src.functional.decompose import decompose_to_triangles
 Module for finding area of a polygon.
 """
 
-def area(vertices):
+def find_area_of_polygon(vertices):
     """
     Return area of polygon.
 
@@ -22,10 +22,10 @@ def area(vertices):
     decomposition = decompose_to_triangles(vertices)
     area = 0.0
     for triangle in decomposition:
-        area += area_of_triangle(triangle)
+        area += find_area_of_triangle(triangle)
     return area
 
-def area_of_triangle(vertices):
+def find_area_of_triangle(vertices):
     """
     Return area of triangle.
 
