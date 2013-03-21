@@ -3,9 +3,11 @@ toric-geometry
 
 Note
 -----
-This repository is a work in progress and you can safely assume that this
-file is not updated with the latest information on what's been coded. If you
-have any questions, feel free to email/message me.
+This repository is a work in progress and you can safely assume that this file
+is not updated with the latest information on what's been coded. I am making an
+attempt at following best practices such as test-driven development, extreme
+programming, etc. so this is as much a CS design project as a mathematical one.
+If you have any questions, feel free to email/message me.
 
 Summary
 -----
