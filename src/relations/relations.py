@@ -1,9 +1,7 @@
-#!/usr/bin/env python
+#/usr/bin/env python
 from optparse import OptionParser
-from numpy import array, loadtxt
-from itertools import product as prod
-import sys
-import src.common.common as common
+from collections import defaultdict
+from sys import stdin, stdout
 
 
 def main():
@@ -23,85 +21,146 @@ def main():
     EXAMPLES
     ---------
     Return the relations for P^1 polarized by O(2)--which corresponds to the
-    polytope [0,2].  The example file contains the points 0, 1, and 2 each on
-    their own line.
-    $ python relations.py ../examples/P1O2
+    polytope [0,2]. (The echo function simulates piping in a file.)
+    $ echo -e '0\n1\n2' | python relations.py
     """
     usage = "usage: %prog [options] dataset"
     usage += '\n'+main.__doc__
     parser = OptionParser(usage=usage)
     parser.add_option(
-        "-o", "--outfilename",
-        help="Write to this file rather than stdout.  [default: %default]",
-        action="store", dest="outfilename", default=None)
-    parser.add_option(
         "-n", "--variable_start",
         help="Start variable count at this number. [default: %default]",
-        action="store", dest="variable_start", default=0)
+        action="store", dest="variableStart", default=0)
+    parser.add_option(
+        "-i", "--infile",
+        help="Filename for input file.",
+        action="store", dest="infile", default=None)
+    parser.add_option(
+        "-o", "--outfile",
+        help="Filename for output file.",
+        action="store", dest="outfile", default=None)
 
     (options, args) = parser.parse_args()
-    ### Parse args
     assert len(args) <= 1
-    infilename = args[0] if args else None
 
-    ## Get infile and outfile.
-    infile, outfile = common.get_inout_files(infilename, options.outfilename)
+    if options.infile:
+        infile = open(options.infile)
+    else:
+        infile = stdin
 
-    _relations(infile, outfile, variable_start=options.variable_start)
+    if options.outfile:
+        outfile = open(options.outfile, 'w')
+    else:
+        outfile = stdout
+        
+    relations(infile, outfile, variableStart=options.variableStart)
 
-    ## Close the files iff not stdin, stdout
-    common.close_files(infile, outfile)
+    infile.close()
+    outfile.close()
 
-def _relations(infile, outfile, variable_start):
-    lattice_points = loadtxt(infile, dtype='int', delimiter=',')
-    variable_dict = _get_variable_dict(lattice_points, variable_start)
-    variables = variable_dict.keys()
+
+def relations(infile, outfile, variableStart):
+    latticePoints = loadPoints(infile, delimiter=',')
+    variableDict = getVariableDict(latticePoints, variableStart)
+    variables = variableDict.keys()
     variables.sort()
-    relations = _get_relations(variable_dict)
-    num_relations = reduce(lambda x, y: x + len(y) - 1, relations, 0)
-    _pretty_print(outfile, variables, variable_dict, relations, num_relations)
+    relations = getRelations(variableDict)
+    numRelations = reduce(lambda x, y: x + len(y) - 1, relations, 0)
+    prettyPrint(outfile, variables, variableDict, relations, numRelations)
 
 
-def _get_relations(variable_dict):
-    relations_dict = {}
-    variables = variable_dict.keys()
-    for var1, var2 in prod(variables, variables):
-        if var1 <= var2:
-            key = (variable_dict[var1] + variable_dict[var2]).tostring()
-            if key in relations_dict:
-                relations_dict[key].append([var1, var2])
-            else:
-                relations_dict[key] = [[var1, var2]]
+def makeStringRep(point):
+    """
+    Convert list of integers to comma-separated string for hashing.
+    """
+    point = [str(num) for num in point]
+    rep = ",".join(point)
+    return rep
+
+
+def loadPoints(infile, delimiter=','):
+    """
+    Take a file object whose lines are comprised of delimter-separated list of
+    integers and return a list of lists of those lines split at the dilimiters
+    and convert the strings to integer objects. Check to make sure values are
+    valid integers and that each line has the same number of items in the
+    comma-separated list.
+    """
+    latticePoints = []
+    for vector in infile:
+        point = vector.strip().split(delimiter)
+        try:
+            point = [int(num) for num in point]
+        except ValueError:
+            raise Exception("Must input integer vector")
+        latticePoints.append(point)
+    dim = len(latticePoints[0])
+    for point in latticePoints:
+        if len(point) != dim:
+            raise Exception("All points must be same dimension")
+    return latticePoints
+
+
+def getRelations(variableDict):
+    """
+    Return a list of pairs of variables whose corresponding pair of points sum
+    to the same point. (This probably makes no sense.)
+    """
+    relationsDict = defaultdict(list)
+    variables = variableDict.keys()
+    for var1 in variables:
+        for var2 in variables:
+            if var1 <= var2:
+                key = addPoints(variableDict[var1], variableDict[var2])
+                key = makeStringRep(key)
+                relationsDict[key].append([var1, var2])
     relations = []
-    for thing in relations_dict:
-        if len(relations_dict[thing]) > 1:
-            relations.append(relations_dict[thing])
+    for key in relationsDict:
+        relation = relationsDict[key]
+        if len(relation) > 1:
+            relations.append(relation)
     return relations
 
 
-def _pretty_print(outfile, variables, variable_dict, relations, num_relations):
+def addPoints(point1, point2):
+    """
+    Return the vector sum of two lists of integers.
+    """
+    result = []
+    for num1, num2 in zip(point1, point2):
+        result.append(point1 + point2)
+    return result
+
+def prettyPrint(outfile, variables, variableDict, relations, numRelations):
+    """
+    Print out result statistics to outfile.
+    """
     outfile.write("Variables:\n")
     for variable in variables:
         outfile.write('\t' + variable + ' <----> ')
-        outfile.write(str(variable_dict[variable].tolist()) + '\n')
-    outfile.write(str(num_relations) + " Relations:\n")
+        outfile.write(makeStringRep(variableDict[variable]) + '\n')
+    outfile.write(str(numRelations) + " Relations:\n")
     if not relations:
         outfile.write('\tNone\n')
     else:
         for relation in relations:
             relation.sort()
-            temp_string = '\t'
-            for pair in relation:
-                temp_string = temp_string + pair[0] + pair[1] + ' = '
-            outfile.write(temp_string[:-3] + '\n')
+            tempString = '\t'
+            for var1, var2 in relation:
+                tempString = tempString + var1 + var2 + ' = '
+            outfile.write(tempString[:-3] + '\n')
 
 
-def _get_variable_dict(lattice_points, variable_start):
-    variable_start = int(variable_start)
-    variable_dict = {}
-    for num, point in enumerate(lattice_points, variable_start):
-        variable_dict['x' + str(num)] = point
-    return variable_dict
+def getVariableDict(latticePoints, variableStart):
+    """
+    Take a list of lattice points and return a dictionary mapping a formal
+    variable to each lattice point.
+    """
+    variableStart = int(variableStart)
+    variableDict = {}
+    for num, point in enumerate(latticePoints, variableStart):
+        variableDict['x' + str(num)] = point
+    return variableDict
 
 
 if __name__=='__main__':
