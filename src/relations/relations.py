@@ -1,4 +1,4 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 from optparse import OptionParser
 from collections import defaultdict
 from sys import stdin, stdout
